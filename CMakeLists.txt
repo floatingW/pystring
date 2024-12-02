@@ -24,3 +24,4 @@ install (FILES pystring.h
     COMPONENT developer
 )
 
+TARGET_COMPILE_OPTIONS(pystring PRIVATE -Wall -Wextra -pedantic -Werror)
