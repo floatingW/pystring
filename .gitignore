@@ -3,3 +3,4 @@ test
 libpystring.la
 pystring.lo
 pystring.o
+build/
