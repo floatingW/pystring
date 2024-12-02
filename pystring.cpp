@@ -395,9 +395,15 @@ const std::string colon = ":";
          * -1 on error, 0 if not found and 1 if found.
          */
         
+        enum class _string_tailmatch_direction
+        {
+            startswith = -1,
+            endswith = 1
+        };
+
         int _string_tailmatch(const std::string & self, const std::string & substr,
                               Py_ssize_t start, Py_ssize_t end,
-                              int direction)
+                              _string_tailmatch_direction direction)
         {
             Py_ssize_t len = (Py_ssize_t) self.size();
             Py_ssize_t slen = (Py_ssize_t) substr.size();
@@ -407,7 +413,7 @@ const std::string colon = ":";
             
             ADJUST_INDICES(start, end, len);
             
-            if (direction < 0) {
+            if (direction == _string_tailmatch_direction::startswith) {
                 // startswith
                 if (start+slen > len)
                     return 0;
@@ -428,7 +434,8 @@ const std::string colon = ":";
     bool endswith( const std::string & str, const std::string & suffix, int start, int end )
     {
         int result = _string_tailmatch(str, suffix,
-                                       (Py_ssize_t) start, (Py_ssize_t) end, +1);
+                                       (Py_ssize_t) start, (Py_ssize_t) end,
+                                       _string_tailmatch_direction::endswith);
         //if (result == -1) // TODO: Error condition
         
         return static_cast<bool>(result);
@@ -438,7 +445,8 @@ const std::string colon = ":";
     bool startswith( const std::string & str, const std::string & prefix, int start, int end )
     {
         int result = _string_tailmatch(str, prefix,
-                                       (Py_ssize_t) start, (Py_ssize_t) end, -1);
+                                       (Py_ssize_t) start, (Py_ssize_t) end,
+                                       _string_tailmatch_direction::startswith);
         //if (result == -1) // TODO: Error condition
         
         return static_cast<bool>(result);
