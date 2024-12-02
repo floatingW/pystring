@@ -401,7 +401,7 @@ const std::string colon = ":";
             endswith = 1
         };
 
-        int _string_tailmatch(const std::string & self, const std::string & substr,
+        bool _string_tailmatch(const std::string & self, const std::string & substr,
                               Py_ssize_t start, Py_ssize_t end,
                               _string_tailmatch_direction direction)
         {
@@ -416,40 +416,40 @@ const std::string colon = ":";
             if (direction == _string_tailmatch_direction::startswith) {
                 // startswith
                 if (start+slen > len)
-                    return 0;
+                    return false;
             } else {
                 // endswith
                 if (end-start < slen || start > len)
-                    return 0;
+                    return false;
                 if (end-slen > start)
                     start = end - slen;
             }
             if (end-start >= slen)
                 return (!std::memcmp(str+start, sub, slen));
             
-            return 0;
+            return false;
         }
     }
     
     bool endswith( const std::string & str, const std::string & suffix, int start, int end )
     {
-        int result = _string_tailmatch(str, suffix,
+        auto result = _string_tailmatch(str, suffix,
                                        (Py_ssize_t) start, (Py_ssize_t) end,
                                        _string_tailmatch_direction::endswith);
         //if (result == -1) // TODO: Error condition
         
-        return static_cast<bool>(result);
+        return result;
     }
     
     
     bool startswith( const std::string & str, const std::string & prefix, int start, int end )
     {
-        int result = _string_tailmatch(str, prefix,
+        auto result = _string_tailmatch(str, prefix,
                                        (Py_ssize_t) start, (Py_ssize_t) end,
                                        _string_tailmatch_direction::startswith);
         //if (result == -1) // TODO: Error condition
         
-        return static_cast<bool>(result);
+        return result;
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////
