@@ -221,7 +221,7 @@ const std::string colon = ":";
     //////////////////////////////////////////////////////////////////////////////////////////////
     ///
     ///
-    enum class _string_strip_direction
+    enum class string_strip_direction_
     {
         leftstrip = 0,
         rightstrip = 1,
@@ -231,14 +231,14 @@ const std::string colon = ":";
     //////////////////////////////////////////////////////////////////////////////////////////////
     ///
     ///
-    std::string do_strip( std::string_view str, _string_strip_direction striptype, std::string_view chars  )
+    std::string do_strip( std::string_view str, string_strip_direction_ striptype, std::string_view chars  )
     {
         Py_ssize_t len = (Py_ssize_t) str.size(), i, j, charslen = (Py_ssize_t) chars.size();
 
         if ( charslen == 0 )
         {
             i = 0;
-            if ( striptype != _string_strip_direction::rightstrip )
+            if ( striptype != string_strip_direction_::rightstrip )
             {
                 while ( i < len && ::isspace( str[i] ) )
                 {
@@ -247,7 +247,7 @@ const std::string colon = ":";
             }
 
             j = len;
-            if ( striptype != _string_strip_direction::leftstrip )
+            if ( striptype != string_strip_direction_::leftstrip )
             {
                 do
                 {
@@ -265,7 +265,7 @@ const std::string colon = ":";
             const char * sep = chars.data();
 
             i = 0;
-            if ( striptype != _string_strip_direction::rightstrip )
+            if ( striptype != string_strip_direction_::rightstrip )
             {
                 while ( i < len && memchr(sep, str[i], charslen) )
                 {
@@ -274,7 +274,7 @@ const std::string colon = ":";
             }
 
             j = len;
-            if (striptype != _string_strip_direction::leftstrip)
+            if (striptype != string_strip_direction_::leftstrip)
             {
                 do
                 {
@@ -345,7 +345,7 @@ const std::string colon = ":";
     ///
     std::string strip( std::string_view str, std::string_view chars )
     {
-        return do_strip( str, _string_strip_direction::bothstrip, chars );
+        return do_strip( str, string_strip_direction_::bothstrip, chars );
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////
@@ -353,7 +353,7 @@ const std::string colon = ":";
     ///
     std::string lstrip( std::string_view str, std::string_view chars )
     {
-        return do_strip( str, _string_strip_direction::leftstrip, chars );
+        return do_strip( str, string_strip_direction_::leftstrip, chars );
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////
@@ -361,7 +361,7 @@ const std::string colon = ":";
     ///
     std::string rstrip( std::string_view str, std::string_view chars )
     {
-        return do_strip( str, _string_strip_direction::rightstrip, chars );
+        return do_strip( str, string_strip_direction_::rightstrip, chars );
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////
@@ -398,7 +398,7 @@ const std::string colon = ":";
          * -1 on error, 0 if not found and 1 if found.
          */
         
-        enum class _string_tailmatch_direction
+        enum class string_tailmatch_direction_
         {
             startswith = -1,
             endswith = 1
@@ -406,7 +406,7 @@ const std::string colon = ":";
 
         bool _string_tailmatch(std::string_view self, std::string_view substr,
                               Py_ssize_t start, Py_ssize_t end,
-                              _string_tailmatch_direction direction)
+                              string_tailmatch_direction_ direction)
         {
             Py_ssize_t len = (Py_ssize_t) self.size();
             Py_ssize_t slen = (Py_ssize_t) substr.size();
@@ -416,7 +416,7 @@ const std::string colon = ":";
             
             ADJUST_INDICES(start, end, len);
             
-            if (direction == _string_tailmatch_direction::startswith) {
+            if (direction == string_tailmatch_direction_::startswith) {
                 // startswith
                 if (start+slen > len)
                     return false;
@@ -438,7 +438,7 @@ const std::string colon = ":";
     {
         auto result = _string_tailmatch(str, suffix,
                                        (Py_ssize_t) start, (Py_ssize_t) end,
-                                       _string_tailmatch_direction::endswith);
+                                       string_tailmatch_direction_::endswith);
         //if (result == -1) // TODO: Error condition
         
         return result;
@@ -449,7 +449,7 @@ const std::string colon = ":";
     {
         auto result = _string_tailmatch(str, prefix,
                                        (Py_ssize_t) start, (Py_ssize_t) end,
-                                       _string_tailmatch_direction::startswith);
+                                       string_tailmatch_direction_::startswith);
         //if (result == -1) // TODO: Error condition
         
         return result;
