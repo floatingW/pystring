@@ -10,6 +10,7 @@
 #include <cstring>
 #include <iostream>
 #include <sstream>
+#include <string_view>
 
 namespace pystring
 {
@@ -70,7 +71,7 @@ const std::string colon = ":";
 		//////////////////////////////////////////////////////////////////////////////////////////////
 		///
 		///
-		void split_whitespace( const std::string & str, std::vector< std::string > & result, int maxsplit )
+		void split_whitespace( std::string_view str, std::vector< std::string > & result, int maxsplit )
 		{
 			std::string::size_type i, j, len = str.size();
 			for (i = j = 0; i < len; )
@@ -87,7 +88,7 @@ const std::string colon = ":";
 				{
 					if ( maxsplit-- <= 0 ) break;
 
-					result.push_back( str.substr( j, i - j ));
+					result.push_back(std::string( str.substr( j, i - j )));
 
 					while ( i < len && ::isspace( str[i])) i++;
 					j = i;
@@ -95,7 +96,7 @@ const std::string colon = ":";
 			}
 			if (j < len)
 			{
-				result.push_back( str.substr( j, len - j ));
+				result.push_back(std::string( str.substr( j, len - j )));
 			}
 		}
 
@@ -103,7 +104,7 @@ const std::string colon = ":";
 		//////////////////////////////////////////////////////////////////////////////////////////////
 		///
 		///
-		void rsplit_whitespace( const std::string & str, std::vector< std::string > & result, int maxsplit )
+		void rsplit_whitespace( std::string_view str, std::vector< std::string > & result, int maxsplit )
 		{
 			std::string::size_type len = str.size();
 			std::string::size_type i, j;
@@ -121,7 +122,7 @@ const std::string colon = ":";
 				{
 					if ( maxsplit-- <= 0 ) break;
 
-					result.push_back( str.substr( i, j - i ));
+					result.push_back(std::string(str.substr( i, j - i )));
 
 					while ( i > 0 && ::isspace( str[i - 1])) i--;
 					j = i;
@@ -129,7 +130,7 @@ const std::string colon = ":";
 			}
 			if (j > 0)
 			{
-				result.push_back( str.substr( 0, j ));
+				result.push_back(std::string(str.substr( 0, j )));
 			}
 			//std::reverse( result, result.begin(), result.end() );
 			reverse_strings( result );
@@ -141,7 +142,7 @@ const std::string colon = ":";
     //////////////////////////////////////////////////////////////////////////////////////////////
     ///
     ///
-    void split( const std::string & str, std::vector< std::string > & result, const std::string & sep, int maxsplit )
+    void split( std::string_view str, std::vector< std::string > & result, std::string_view sep, int maxsplit )
     {
         result.clear();
 
@@ -164,7 +165,7 @@ const std::string colon = ":";
             {
                 if ( maxsplit-- <= 0 ) break;
 
-                result.push_back( str.substr( j, i - j ) );
+                result.push_back(std::string(str.substr( j, i - j )));
                 i = j = i + n;
             }
             else
@@ -173,13 +174,13 @@ const std::string colon = ":";
             }
         }
 
-        result.push_back( str.substr( j, len-j ) );
+        result.push_back(std::string(str.substr( j, len-j )));
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////
     ///
     ///
-    void rsplit( const std::string & str, std::vector< std::string > & result, const std::string & sep, int maxsplit )
+    void rsplit( std::string_view str, std::vector< std::string > & result, std::string_view sep, int maxsplit )
     {
         if ( maxsplit < 0 )
         {
@@ -205,7 +206,7 @@ const std::string colon = ":";
             {
                 if ( maxsplit-- <= 0 ) break;
 
-                result.push_back( str.substr( i, j - i ) );
+                result.push_back(std::string(str.substr( i, j - i )));
                 i = j = i - n;
             }
             else
@@ -214,7 +215,7 @@ const std::string colon = ":";
             }
         }
 
-        result.push_back( str.substr( 0, j ) );
+        result.push_back(std::string(str.substr( 0, j )));
         reverse_strings( result );
     }
 
@@ -228,7 +229,7 @@ const std::string colon = ":";
     //////////////////////////////////////////////////////////////////////////////////////////////
     ///
     ///
-    std::string do_strip( const std::string & str, int striptype, const std::string & chars  )
+    std::string do_strip( std::string_view str, int striptype, std::string_view chars  )
     {
         Py_ssize_t len = (Py_ssize_t) str.size(), i, j, charslen = (Py_ssize_t) chars.size();
 
@@ -259,7 +260,7 @@ const std::string colon = ":";
         }
         else
         {
-            const char * sep = chars.c_str();
+            const char * sep = chars.data();
 
             i = 0;
             if ( striptype != RIGHTSTRIP )
@@ -286,11 +287,11 @@ const std::string colon = ":";
 
         if ( i == 0 && j == len )
         {
-            return str;
+            return std::string(str);
         }
         else
         {
-            return str.substr( i, j - i );
+            return std::string(str.substr( i, j - i ));
         }
 
     }
@@ -298,7 +299,7 @@ const std::string colon = ":";
     //////////////////////////////////////////////////////////////////////////////////////////////
     ///
     ///
-    void partition( const std::string & str, const std::string & sep, std::vector< std::string > & result )
+    void partition( std::string_view str, std::string_view sep, std::vector< std::string > & result )
     {
         result.resize(3);
         int index = find( str, sep );
@@ -319,7 +320,7 @@ const std::string colon = ":";
     //////////////////////////////////////////////////////////////////////////////////////////////
     ///
     ///
-    void rpartition( const std::string & str, const std::string & sep, std::vector< std::string > & result )
+    void rpartition( std::string_view str, std::string_view sep, std::vector< std::string > & result )
     {
         result.resize(3);
         int index = rfind( str, sep );
@@ -340,7 +341,7 @@ const std::string colon = ":";
     //////////////////////////////////////////////////////////////////////////////////////////////
     ///
     ///
-    std::string strip( const std::string & str, const std::string & chars )
+    std::string strip( std::string_view str, std::string_view chars )
     {
         return do_strip( str, BOTHSTRIP, chars );
     }
@@ -348,7 +349,7 @@ const std::string colon = ":";
     //////////////////////////////////////////////////////////////////////////////////////////////
     ///
     ///
-    std::string lstrip( const std::string & str, const std::string & chars )
+    std::string lstrip( std::string_view str, std::string_view chars )
     {
         return do_strip( str, LEFTSTRIP, chars );
     }
@@ -356,7 +357,7 @@ const std::string colon = ":";
     //////////////////////////////////////////////////////////////////////////////////////////////
     ///
     ///
-    std::string rstrip( const std::string & str, const std::string & chars )
+    std::string rstrip( std::string_view str, std::string_view chars )
     {
         return do_strip( str, RIGHTSTRIP, chars );
     }
@@ -364,7 +365,7 @@ const std::string colon = ":";
     //////////////////////////////////////////////////////////////////////////////////////////////
     ///
     ///
-    std::string join( const std::string & str, const std::vector< std::string > & seq )
+    std::string join( std::string_view str, const std::vector< std::string > & seq )
     {
         std::vector< std::string >::size_type seqlen = seq.size(), i;
 
@@ -375,7 +376,7 @@ const std::string colon = ":";
 
         for ( i = 1; i < seqlen; ++i )
         {
-            result += str + seq[i];
+            result += std::string(str) + seq[i];
 
         }
 
@@ -401,15 +402,15 @@ const std::string colon = ":";
             endswith = 1
         };
 
-        bool _string_tailmatch(const std::string & self, const std::string & substr,
+        bool _string_tailmatch(std::string_view self, std::string_view substr,
                               Py_ssize_t start, Py_ssize_t end,
                               _string_tailmatch_direction direction)
         {
             Py_ssize_t len = (Py_ssize_t) self.size();
             Py_ssize_t slen = (Py_ssize_t) substr.size();
             
-            const char* sub = substr.c_str();
-            const char* str = self.c_str();
+            const char* sub = substr.data();
+            const char* str = self.data();
             
             ADJUST_INDICES(start, end, len);
             
@@ -431,7 +432,7 @@ const std::string colon = ":";
         }
     }
     
-    bool endswith( const std::string & str, const std::string & suffix, int start, int end )
+    bool endswith( std::string_view str, std::string_view suffix, int start, int end )
     {
         auto result = _string_tailmatch(str, suffix,
                                        (Py_ssize_t) start, (Py_ssize_t) end,
@@ -442,7 +443,7 @@ const std::string colon = ":";
     }
     
     
-    bool startswith( const std::string & str, const std::string & prefix, int start, int end )
+    bool startswith( std::string_view str, std::string_view prefix, int start, int end )
     {
         auto result = _string_tailmatch(str, prefix,
                                        (Py_ssize_t) start, (Py_ssize_t) end,
@@ -456,7 +457,7 @@ const std::string colon = ":";
     ///
     ///
 
-    bool isalnum( const std::string & str )
+    bool isalnum( std::string_view str )
     {
         std::string::size_type len = str.size(), i;
         if ( len == 0 ) return false;
@@ -477,7 +478,7 @@ const std::string colon = ":";
     //////////////////////////////////////////////////////////////////////////////////////////////
     ///
     ///
-    bool isalpha( const std::string & str )
+    bool isalpha( std::string_view str )
     {
         std::string::size_type len = str.size(), i;
         if ( len == 0 ) return false;
@@ -493,7 +494,7 @@ const std::string colon = ":";
     //////////////////////////////////////////////////////////////////////////////////////////////
     ///
     ///
-    bool isdigit( const std::string & str )
+    bool isdigit( std::string_view str )
     {
         std::string::size_type len = str.size(), i;
         if ( len == 0 ) return false;
@@ -509,7 +510,7 @@ const std::string colon = ":";
     //////////////////////////////////////////////////////////////////////////////////////////////
     ///
     ///
-    bool islower( const std::string & str )
+    bool islower( std::string_view str )
     {
         std::string::size_type len = str.size(), i;
         if ( len == 0 ) return false;
@@ -525,7 +526,7 @@ const std::string colon = ":";
     //////////////////////////////////////////////////////////////////////////////////////////////
     ///
     ///
-    bool isspace( const std::string & str )
+    bool isspace( std::string_view str )
     {
         std::string::size_type len = str.size(), i;
         if ( len == 0 ) return false;
@@ -541,7 +542,7 @@ const std::string colon = ":";
     //////////////////////////////////////////////////////////////////////////////////////////////
     ///
     ///
-    bool istitle( const std::string & str )
+    bool istitle( std::string_view str )
     {
         std::string::size_type len = str.size(), i;
 
@@ -585,7 +586,7 @@ const std::string colon = ":";
     //////////////////////////////////////////////////////////////////////////////////////////////
     ///
     ///
-    bool isupper( const std::string & str )
+    bool isupper( std::string_view str )
     {
         std::string::size_type len = str.size(), i;
         if ( len == 0 ) return false;
@@ -601,7 +602,7 @@ const std::string colon = ":";
     //////////////////////////////////////////////////////////////////////////////////////////////
     ///
     ///
-    std::string capitalize( const std::string & str )
+    std::string capitalize( std::string_view str )
     {
         std::string s( str );
         std::string::size_type len = s.size(), i;
@@ -622,7 +623,7 @@ const std::string colon = ":";
     //////////////////////////////////////////////////////////////////////////////////////////////
     ///
     ///
-    std::string lower( const std::string & str )
+    std::string lower( std::string_view str )
     {
         std::string s( str );
         std::string::size_type len = s.size(), i;
@@ -638,7 +639,7 @@ const std::string colon = ":";
     //////////////////////////////////////////////////////////////////////////////////////////////
     ///
     ///
-    std::string upper( const std::string & str )
+    std::string upper( std::string_view str )
     {
         std::string s( str ) ;
         std::string::size_type len = s.size(), i;
@@ -654,7 +655,7 @@ const std::string colon = ":";
     //////////////////////////////////////////////////////////////////////////////////////////////
     ///
     ///
-    std::string swapcase( const std::string & str )
+    std::string swapcase( std::string_view str )
     {
         std::string s( str );
         std::string::size_type len = s.size(), i;
@@ -671,7 +672,7 @@ const std::string colon = ":";
     //////////////////////////////////////////////////////////////////////////////////////////////
     ///
     ///
-    std::string title( const std::string & str )
+    std::string title( std::string_view str )
     {
         std::string s( str );
         std::string::size_type len = s.size(), i;
@@ -708,7 +709,7 @@ const std::string colon = ":";
     //////////////////////////////////////////////////////////////////////////////////////////////
     ///
     ///
-    std::string translate( const std::string & str, const std::string & table, const std::string & deletechars )
+    std::string translate( std::string_view str, std::string_view table, std::string_view deletechars )
     {
         std::string s;
         std::string::size_type len = str.size(), dellen = deletechars.size();
@@ -716,7 +717,7 @@ const std::string colon = ":";
         if ( table.size() != 256 )
         {
             // TODO : raise exception instead
-            return str;
+            return std::string(str);
         }
 
         //if nothing is deleted, use faster code
@@ -758,13 +759,13 @@ const std::string colon = ":";
     //////////////////////////////////////////////////////////////////////////////////////////////
     ///
     ///
-    std::string zfill( const std::string & str, int width )
+    std::string zfill( std::string_view str, int width )
     {
         int len = (int)str.size();
 
         if ( len >= width )
         {
-            return str;
+            return std::string(str);
         }
 
         std::string s( str );
@@ -787,55 +788,55 @@ const std::string colon = ":";
     //////////////////////////////////////////////////////////////////////////////////////////////
     ///
     ///
-    std::string ljust( const std::string & str, int width )
+    std::string ljust( std::string_view str, int width )
     {
         std::string::size_type len = str.size();
-        if ( (( int ) len ) >= width ) return str;
-        return str + std::string( width - len, ' ' );
+        if ( (( int ) len ) >= width ) return std::string(str);
+        return std::string(str) + std::string( width - len, ' ' );
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////
     ///
     ///
-    std::string rjust( const std::string & str, int width )
+    std::string rjust( std::string_view str, int width )
     {
         std::string::size_type len = str.size();
-        if ( (( int ) len ) >= width ) return str;
-        return std::string( width - len, ' ' ) + str;
+        if ( (( int ) len ) >= width ) return std::string(str);
+        return std::string( width - len, ' ' ) + std::string(str);
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////
     ///
     ///
-    std::string center( const std::string & str, int width )
+    std::string center( std::string_view str, int width )
     {
         int len = (int) str.size();
         int marg, left;
 
-        if ( len >= width ) return str;
+        if ( len >= width ) return std::string(str);
 
         marg = width - len;
         left = marg / 2 + (marg & width & 1);
 
-        return std::string( left, ' ' ) + str + std::string( marg - left, ' ' );
+        return std::string( left, ' ' ) + std::string(str) + std::string( marg - left, ' ' );
 
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////
     ///
     ///
-    std::string slice( const std::string & str, int start, int end )
+    std::string slice( std::string_view str, int start, int end )
     {
         ADJUST_INDICES(start, end, (int) str.size());
         if ( start >= end ) return empty_string;
-        return str.substr( start, end - start );
+        return std::string(str.substr( start, end - start ));
     }
     
     
     //////////////////////////////////////////////////////////////////////////////////////////////
     ///
     ///
-    int find( const std::string & str, const std::string & sub, int start, int end  )
+    int find( std::string_view str, std::string_view sub, int start, int end  )
     {
         ADJUST_INDICES(start, end, (int) str.size());
         
@@ -855,7 +856,7 @@ const std::string colon = ":";
     //////////////////////////////////////////////////////////////////////////////////////////////
     ///
     ///
-    int index( const std::string & str, const std::string & sub, int start, int end  )
+    int index( std::string_view str, std::string_view sub, int start, int end  )
     {
         return find( str, sub, start, end );
     }
@@ -863,7 +864,7 @@ const std::string colon = ":";
     //////////////////////////////////////////////////////////////////////////////////////////////
     ///
     ///
-    int rfind( const std::string & str, const std::string & sub, int start, int end )
+    int rfind( std::string_view str, std::string_view sub, int start, int end )
     {
         ADJUST_INDICES(start, end, (int) str.size());
         
@@ -880,7 +881,7 @@ const std::string colon = ":";
     //////////////////////////////////////////////////////////////////////////////////////////////
     ///
     ///
-    int rindex( const std::string & str, const std::string & sub, int start, int end )
+    int rindex( std::string_view str, std::string_view sub, int start, int end )
     {
         return rfind( str, sub, start, end );
     }
@@ -888,7 +889,7 @@ const std::string colon = ":";
     //////////////////////////////////////////////////////////////////////////////////////////////
     ///
     ///
-    std::string expandtabs( const std::string & str, int tabsize )
+    std::string expandtabs( std::string_view str, int tabsize )
     {
         std::string s( str );
 
@@ -933,7 +934,7 @@ const std::string colon = ":";
     //////////////////////////////////////////////////////////////////////////////////////////////
     ///
     ///
-    int count( const std::string & str, const std::string & substr, int start, int end )
+    int count( std::string_view str, std::string_view substr, int start, int end )
     {
         int nummatches = 0;
         int cursor = start;
@@ -957,7 +958,7 @@ const std::string colon = ":";
     ///
     ///
     
-    std::string replace( const std::string & str, const std::string & oldstr, const std::string & newstr, int count )
+    std::string replace( std::string_view str, std::string_view oldstr, std::string_view newstr, int count )
     {
         int sofar = 0;
         int cursor = 0;
@@ -997,7 +998,7 @@ const std::string colon = ":";
     //////////////////////////////////////////////////////////////////////////////////////////////
     ///
     ///
-    void splitlines(  const std::string & str, std::vector< std::string > & result, bool keepends )
+    void splitlines(  std::string_view str, std::vector< std::string > & result, bool keepends )
     {
         result.clear();
         std::string::size_type len = str.size(), i, j, eol;
@@ -1022,14 +1023,14 @@ const std::string colon = ":";
 
             }
 
-            result.push_back( str.substr( j, eol - j ) );
+            result.push_back(std::string( str.substr( j, eol - j ) ));
             j = i;
 
         }
 
         if (j < len)
         {
-            result.push_back( str.substr( j, len - j ) );
+            result.push_back(std::string( str.substr( j, len - j ) ));
         }
 
     }
@@ -1037,11 +1038,11 @@ const std::string colon = ":";
     //////////////////////////////////////////////////////////////////////////////////////////////
     ///
     ///
-    std::string mul( const std::string & str, int n )
+    std::string mul( std::string_view str, int n )
     {
         // Early exits
         if (n <= 0) return empty_string;
-        if (n == 1) return str;
+        if (n == 1) return std::string(str);
         
         std::ostringstream os;
         for(int i=0; i<n; ++i)
@@ -1054,27 +1055,27 @@ const std::string colon = ":";
     //////////////////////////////////////////////////////////////////////////////////////////////
     ///
     ///
-    std::string removeprefix( const std::string & str, const std::string & prefix )
+    std::string removeprefix( std::string_view str, std::string_view prefix )
     {
         if (pystring::startswith(str, prefix))
         {
-            return str.substr(prefix.length());
+            return std::string(str.substr(prefix.length()));
         }
 
-        return str;
+        return std::string(str);
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////
     ///
     ///
-    std::string removesuffix( const std::string & str, const std::string & suffix )
+    std::string removesuffix( std::string_view str, std::string_view suffix )
     {
         if (pystring::endswith(str, suffix))
         {
-            return str.substr(0, str.length() - suffix.length());
+            return std::string(str.substr(0, str.length() - suffix.length()));
         }
 
-        return str;
+        return std::string(str);
     }
 
 
@@ -1092,11 +1093,11 @@ namespace path
     /// Split a pathname into drive and path specifiers.
     /// Returns drivespec, pathspec. Either part may be empty.
     void splitdrive_nt(std::string & drivespec, std::string & pathspec,
-                       const std::string & p)
+                       std::string_view p)
     {
         if (p.size() >= 2 && p[1] == ':')
         {
-            std::string path = p; // In case drivespec == p
+            std::string path = std::string(p); // In case drivespec == p
             drivespec = pystring::slice(path, 0, 2);
             pathspec = pystring::slice(path, 2);
         }
@@ -1109,14 +1110,14 @@ namespace path
 
     // On Posix, drive is always empty
     void splitdrive_posix(std::string & drivespec, std::string & pathspec,
-                          const std::string & path)
+                          std::string_view path)
     {
         drivespec = empty_string;
         pathspec = path;
     }
 
     void splitdrive(std::string & drivespec, std::string & pathspec,
-                    const std::string & path)
+                    std::string_view path)
     {
 #ifdef WINDOWS
         return splitdrive_nt(drivespec, pathspec, path);
@@ -1132,7 +1133,7 @@ namespace path
     // Test whether a path is absolute
     // In windows, if the character to the right of the colon
     // is a forward or backslash it's absolute.
-    bool isabs_nt(const std::string & path)
+    bool isabs_nt(std::string_view path)
     {
         std::string drivespec, pathspec;
         splitdrive_nt(drivespec, pathspec, path);
@@ -1140,12 +1141,12 @@ namespace path
         return ((pathspec[0] == '/') || (pathspec[0] == '\\'));
     }
 
-    bool isabs_posix(const std::string & s)
+    bool isabs_posix(std::string_view s)
     {
         return pystring::startswith(s, forward_slash);
     }
 
-    bool isabs(const std::string & path)
+    bool isabs(std::string_view path)
     {
 #ifdef WINDOWS
         return isabs_nt(path);
@@ -1159,21 +1160,21 @@ namespace path
     ///
     ///
     
-    std::string abspath_nt(const std::string & path, const std::string & cwd)
+    std::string abspath_nt(std::string_view path, std::string_view cwd)
     {
-        std::string p = path;
+        std::string p = std::string(path);
         if(!isabs_nt(p)) p = join_nt(cwd, p);
         return normpath_nt(p);
     }
     
-    std::string abspath_posix(const std::string & path, const std::string & cwd)
+    std::string abspath_posix(std::string_view path, std::string_view cwd)
     {
-        std::string p = path;
+        std::string p = std::string(path);
         if(!isabs_posix(p)) p = join_posix(cwd, p);
         return normpath_posix(p);
     }
     
-    std::string abspath(const std::string & path, const std::string & cwd)
+    std::string abspath(std::string_view path, std::string_view cwd)
     {
 #ifdef WINDOWS
         return abspath_nt(path, cwd);
@@ -1277,7 +1278,7 @@ namespace path
     }
     
     // Join two or more pathname components, inserting double_back_slash as needed.
-    std::string join_nt(const std::string & a, const std::string & b)
+    std::string join_nt(std::string_view a, std::string_view b)
     {
         std::vector< std::string > paths(2);
         paths[0] = a;
@@ -1318,7 +1319,7 @@ namespace path
         return path;
     }
 
-    std::string join_posix(const std::string & a, const std::string & b)
+    std::string join_posix(std::string_view a, std::string_view b)
     {
         std::vector< std::string > paths(2);
         paths[0] = a;
@@ -1326,7 +1327,7 @@ namespace path
         return join_posix(paths);
     }
     
-    std::string join(const std::string & path1, const std::string & path2)
+    std::string join(std::string_view path1, std::string_view path2)
     {
 #ifdef WINDOWS
         return join_nt(path1, path2);
@@ -1354,7 +1355,7 @@ namespace path
     // Return (head, tail) where tail is everything after the final slash.
     // Either part may be empty
 
-    void split_nt(std::string & head, std::string & tail, const std::string & path)
+    void split_nt(std::string & head, std::string & tail, std::string_view path)
     {
         std::string d, p;
         splitdrive_nt(d, p, path);
@@ -1389,7 +1390,7 @@ namespace path
     // '/' in the path, head  will be empty.
     // Trailing '/'es are stripped from head unless it is the root.
 
-    void split_posix(std::string & head, std::string & tail, const std::string & p)
+    void split_posix(std::string & head, std::string & tail, std::string_view p)
     {
         int i = pystring::rfind(p, forward_slash) + 1;
         
@@ -1402,7 +1403,7 @@ namespace path
         }
     }
 
-    void split(std::string & head, std::string & tail, const std::string & path)
+    void split(std::string & head, std::string & tail, std::string_view path)
     {
 #ifdef WINDOWS
         return split_nt(head, tail, path);
@@ -1416,21 +1417,21 @@ namespace path
     ///
     ///
 
-    std::string basename_nt(const std::string & path)
+    std::string basename_nt(std::string_view path)
     {
         std::string head, tail;
         split_nt(head, tail, path);
         return tail;
     }
 
-    std::string basename_posix(const std::string & path)
+    std::string basename_posix(std::string_view path)
     {
         std::string head, tail;
         split_posix(head, tail, path);
         return tail;
     }
 
-    std::string basename(const std::string & path)
+    std::string basename(std::string_view path)
     {
 #ifdef WINDOWS
         return basename_nt(path);
@@ -1439,21 +1440,21 @@ namespace path
 #endif
     }
 
-    std::string dirname_nt(const std::string & path)
+    std::string dirname_nt(std::string_view path)
     {
         std::string head, tail;
         split_nt(head, tail, path);
         return head;
     }
     
-    std::string dirname_posix(const std::string & path)
+    std::string dirname_posix(std::string_view path)
     {
         std::string head, tail;
         split_posix(head, tail, path);
         return head;
     }
     
-    std::string dirname(const std::string & path)
+    std::string dirname(std::string_view path)
     {
 #ifdef WINDOWS
         return dirname_nt(path);
@@ -1468,9 +1469,9 @@ namespace path
     ///
 
     // Normalize a path, e.g. A//B, A/./B and A/foo/../B all become A\B.
-    std::string normpath_nt(const std::string & p)
+    std::string normpath_nt(std::string_view p)
     {
-        std::string path = p;
+        std::string path = std::string(p);
         path = pystring::replace(path, forward_slash,double_back_slash);
         
         std::string prefix;
@@ -1552,11 +1553,11 @@ namespace path
     // if it contains symbolic links!
     // Normalize path, eliminating double slashes, etc.
 
-    std::string normpath_posix(const std::string & p)
+    std::string normpath_posix(std::string_view p)
     {
         if(p.empty()) return dot;
         
-        std::string path = p;
+        std::string path = std::string(p);
         
         int initial_slashes = pystring::startswith(path, forward_slash) ? 1 : 0;
         
@@ -1596,7 +1597,7 @@ namespace path
         return path;
     }
     
-    std::string normpath(const std::string & path)
+    std::string normpath(std::string_view path)
     {
 #ifdef WINDOWS
         return normpath_nt(path);
@@ -1615,10 +1616,10 @@ namespace path
     // It is always true that root + ext == p
 
     void splitext_generic(std::string & root, std::string & ext,
-                          const std::string & p,
-                          const std::string & sep,
-                          const std::string & altsep,
-                          const std::string & extsep)
+                          std::string_view p,
+                          std::string_view sep,
+                          std::string_view altsep,
+                          std::string_view extsep)
     {
         int sepIndex = pystring::rfind(p, sep);
         if(!altsep.empty())
@@ -1650,19 +1651,19 @@ namespace path
         ext = empty_string;
     }
 
-    void splitext_nt(std::string & root, std::string & ext, const std::string & path)
+    void splitext_nt(std::string & root, std::string & ext, std::string_view path)
     {
         return splitext_generic(root, ext, path,
                                 double_back_slash, forward_slash, dot);
     }
 
-    void splitext_posix(std::string & root, std::string & ext, const std::string & path)
+    void splitext_posix(std::string & root, std::string & ext, std::string_view path)
     {
         return splitext_generic(root, ext, path,
                                 forward_slash, empty_string, dot);
     }
 
-    void splitext(std::string & root, std::string & ext, const std::string & path)
+    void splitext(std::string & root, std::string & ext, std::string_view path)
     {
 #ifdef WINDOWS
         return splitext_nt(root, ext, path);
