@@ -221,21 +221,24 @@ const std::string colon = ":";
     //////////////////////////////////////////////////////////////////////////////////////////////
     ///
     ///
-    #define LEFTSTRIP 0
-    #define RIGHTSTRIP 1
-    #define BOTHSTRIP 2
+    enum class _string_strip_direction
+    {
+        leftstrip = 0,
+        rightstrip = 1,
+        bothstrip = 2
+    };
 
     //////////////////////////////////////////////////////////////////////////////////////////////
     ///
     ///
-    std::string do_strip( std::string_view str, int striptype, std::string_view chars  )
+    std::string do_strip( std::string_view str, _string_strip_direction striptype, std::string_view chars  )
     {
         Py_ssize_t len = (Py_ssize_t) str.size(), i, j, charslen = (Py_ssize_t) chars.size();
 
         if ( charslen == 0 )
         {
             i = 0;
-            if ( striptype != RIGHTSTRIP )
+            if ( striptype != _string_strip_direction::rightstrip )
             {
                 while ( i < len && ::isspace( str[i] ) )
                 {
@@ -244,7 +247,7 @@ const std::string colon = ":";
             }
 
             j = len;
-            if ( striptype != LEFTSTRIP )
+            if ( striptype != _string_strip_direction::leftstrip )
             {
                 do
                 {
@@ -262,7 +265,7 @@ const std::string colon = ":";
             const char * sep = chars.data();
 
             i = 0;
-            if ( striptype != RIGHTSTRIP )
+            if ( striptype != _string_strip_direction::rightstrip )
             {
                 while ( i < len && memchr(sep, str[i], charslen) )
                 {
@@ -271,7 +274,7 @@ const std::string colon = ":";
             }
 
             j = len;
-            if (striptype != LEFTSTRIP)
+            if (striptype != _string_strip_direction::leftstrip)
             {
                 do
                 {
@@ -342,7 +345,7 @@ const std::string colon = ":";
     ///
     std::string strip( std::string_view str, std::string_view chars )
     {
-        return do_strip( str, BOTHSTRIP, chars );
+        return do_strip( str, _string_strip_direction::bothstrip, chars );
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////
@@ -350,7 +353,7 @@ const std::string colon = ":";
     ///
     std::string lstrip( std::string_view str, std::string_view chars )
     {
-        return do_strip( str, LEFTSTRIP, chars );
+        return do_strip( str, _string_strip_direction::leftstrip, chars );
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////
@@ -358,7 +361,7 @@ const std::string colon = ":";
     ///
     std::string rstrip( std::string_view str, std::string_view chars )
     {
-        return do_strip( str, RIGHTSTRIP, chars );
+        return do_strip( str, _string_strip_direction::rightstrip, chars );
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////
