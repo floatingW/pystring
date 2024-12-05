@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.2)
 project(pystring CXX)
 
 option (BUILD_SHARED_LIBS "Build shared libraries (set to OFF to build static libs)" ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_library(pystring
     pystring.cpp
