@@ -7,6 +7,7 @@
 
 #include <algorithm>
 #include <cctype>
+#include <cstdint>
 #include <cstring>
 #include <sstream>
 #include <string_view>
@@ -221,11 +222,11 @@ const std::string colon = ":";
     //////////////////////////////////////////////////////////////////////////////////////////////
     ///
     ///
-    enum class string_strip_direction_
+    enum class string_strip_direction_ : std::uint8_t
     {
-        leftstrip = 0,
-        rightstrip = 1,
-        bothstrip = 2
+        leftstrip,
+        rightstrip,
+        bothstrip
     };
 
     //////////////////////////////////////////////////////////////////////////////////////////////
@@ -393,17 +394,16 @@ const std::string colon = ":";
     
     namespace
     {
+        enum class string_tailmatch_direction_ : std::uint8_t
+        {
+            startswith,
+            endswith
+        };
+
         /* Matches the end (direction >= 0) or start (direction < 0) of self
          * against substr, using the start and end arguments. Returns
          * -1 on error, 0 if not found and 1 if found.
          */
-        
-        enum class string_tailmatch_direction_
-        {
-            startswith = -1,
-            endswith = 1
-        };
-
         bool _string_tailmatch(std::string_view self, std::string_view substr,
                               Py_ssize_t start, Py_ssize_t end,
                               string_tailmatch_direction_ direction)
