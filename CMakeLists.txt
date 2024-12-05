@@ -26,3 +26,4 @@ install (FILES pystring.h
 )
 
 TARGET_COMPILE_OPTIONS(pystring PRIVATE -Wall -Wextra -pedantic -Werror)
+TARGET_COMPILE_OPTIONS(pystring_test PRIVATE -Wall -Wextra -pedantic -Werror)
